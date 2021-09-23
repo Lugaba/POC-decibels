@@ -14,12 +14,13 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     var recordingSession: AVAudioSession!
     var audioRecorder: AVAudioRecorder!
     var time = Timer()
-    var decibel = 0 {
+    var decibel: Float = 0 {
         didSet {
-            decibelLabel.text = "\(decibel)"
+            decibelLabel.text = String(format: "%.3f", decibel)
         }
     }
     var decibelLabel = UILabel()
+    var valores = [Float]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,9 +60,8 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         }
     }
     
-    func loadRecordingUI() {
-        
-    }
+   
+    
     
     func startRecording() {
         let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.m4a")
@@ -78,7 +78,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
             audioRecorder.isMeteringEnabled = true
             audioRecorder.delegate = self
             audioRecorder.record()
-            time = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(readDeci), userInfo: nil, repeats: true)
+            time = Timer.scheduledTimer(timeInterval: 1/5, target: self, selector: #selector(readDeci), userInfo: nil, repeats: true)
             
             
         } catch {
@@ -92,6 +92,12 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     }
     
     func finishRecording(success: Bool) {
+        var soma: Float = 0
+        for i in valores {
+            soma += i
+        }
+        
+        decibelLabel.text = "Média: \(String(format: "%.3f", soma/Float(valores.count)))"
         time.invalidate()
         
         audioRecorder.stop()
@@ -102,7 +108,22 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     
     @objc func readDeci() {
         audioRecorder.updateMeters()
-        decibel = Int(audioRecorder.averagePower(forChannel: 0))
+        decibel = audioRecorder.averagePower(forChannel: 0)
+        
+        let minDb: Float = -50
+        
+        // 2
+        if decibel < minDb {
+            decibel = 0.0
+        } else if decibel >= 1.0 {
+            decibel = 1.0
+        } else {
+          // 3
+            decibel = (minDb - decibel) / minDb
+        }
+
+            
+        valores.append(decibel)
         print(decibel)
     }
     
