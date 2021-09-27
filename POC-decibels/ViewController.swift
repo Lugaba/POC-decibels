@@ -111,16 +111,16 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         audioRecorder.updateMeters()
         decibel = audioRecorder.averagePower(forChannel: 0)
         
-        let minDb: Float = -80
+        let minDb: Float = -85
         
         // 2
         if decibel < minDb {
             decibel = 0.0
         } else if decibel >= 1.0 {
-            decibel = 80
+            decibel = 85
         } else {
           // 3
-            decibel += 80
+            decibel += 85
         }
         
         
