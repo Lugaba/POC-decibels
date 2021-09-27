@@ -98,6 +98,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         }
         
         decibelLabel.text = "Média: \(String(format: "%.3f", soma/Float(valores.count)))"
+        print(decibelLabel.text)
         time.invalidate()
         
         audioRecorder.stop()
@@ -110,17 +111,19 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         audioRecorder.updateMeters()
         decibel = audioRecorder.averagePower(forChannel: 0)
         
-        let minDb: Float = -50
+        let minDb: Float = -80
         
         // 2
         if decibel < minDb {
             decibel = 0.0
         } else if decibel >= 1.0 {
-            decibel = 1.0
+            decibel = 80
         } else {
           // 3
-            decibel = (minDb - decibel) / minDb
+            decibel += 80
         }
+        
+        
 
             
         valores.append(decibel)
