@@ -60,7 +60,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         }
     }
     
-   
+    
     
     
     func startRecording() {
@@ -78,7 +78,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
             audioRecorder.isMeteringEnabled = true
             audioRecorder.delegate = self
             audioRecorder.record()
-            time = Timer.scheduledTimer(timeInterval: 1/5, target: self, selector: #selector(readDeci), userInfo: nil, repeats: true)
+            time = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(readDeci), userInfo: nil, repeats: true)
             
             
         } catch {
@@ -108,8 +108,10 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     }
     
     @objc func readDeci() {
+        decibel = audioRecorder.peakPower(forChannel: 0)
         audioRecorder.updateMeters()
-        decibel = audioRecorder.averagePower(forChannel: 0)
+        
+        
         
         let minDb: Float = -85
         
@@ -119,13 +121,13 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         } else if decibel >= 1.0 {
             decibel = 85
         } else {
-          // 3
+            // 3
             decibel += 85
         }
         
         
-
-            
+        
+        
         valores.append(decibel)
         print(decibel)
     }
